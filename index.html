@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ඔසු උයන | සීවලී මධ්‍ය මහා විද්‍යාලය</title>
     
-    <!-- Modern Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@400;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
@@ -112,6 +111,26 @@
             position: relative;
             background-color: var(--primary-green);
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            border-top: 4px solid var(--secondary-yellow);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            position: absolute;
+            z-index: 5;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .plant-image {
@@ -121,6 +140,10 @@
             opacity: 0;
             transform: scale(1.1);
             transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
         }
 
         .plant-image.loaded {
@@ -135,6 +158,7 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.7) 100%);
+            z-index: 2;
         }
 
         /* --- Content Wrapper & Cards --- */
@@ -237,6 +261,7 @@
             position: relative;
             padding-left: 25px;
             margin-bottom: 12px;
+            font-size: 15px;
         }
 
         /* Modernized bullet point icon */
@@ -309,39 +334,34 @@
 </head>
 <body>
 
-    <!-- Top Header -->
     <header class="app-header">
-        <h1>ඔසු උයන <span>| සීවලී මධ්‍ය මහා විද්‍යාලය</span></h1>
+        <h1>ඔසු උයන <span>| සීවලී මධ්‍ය විද්‍යාලය</span></h1>
     </header>
 
-    <!-- Success Content -->
     <div id="plant-content" class="plant-data-section">
         <div class="hero-section">
+            <div id="loading-spinner" class="spinner"></div>
             <img id="p-image" class="plant-image" src="" alt="Plant Image">
             <div class="image-overlay"></div>
         </div>
 
         <div class="content-wrapper">
-            <!-- Main Title Card -->
             <div class="modern-card title-card">
                 <h1 id="p-title" class="plant-title">නම</h1>
                 <p id="p-scientific" class="scientific-name">Scientific Name</p>
             </div>
 
-            <!-- Details Card with sub-sections -->
             <div class="modern-card details-card">
                 <h3 class="section-title">සාමාන්‍ය තොරතුරු</h3>
                 <p id="p-description" class="section-content">විස්තරය</p>
                 
                 <h3 class="section-title">ඖෂධීය වටිනාකම</h3>
                 <ul id="p-benefits" class="section-content benefits-list">
-                    <!-- Benefits will be inserted here -->
-                </ul>
+                    </ul>
             </div>
         </div>
     </div>
 
-    <!-- Error/No Data Message -->
     <div class="content-wrapper">
         <div id="error-msg">
             <h2>සමාවෙන්න!</h2>
@@ -349,247 +369,245 @@
         </div>
     </div>
 
-    <!-- Footer -->
     <footer class="app-footer">
         <div class="school-name">Seevali Central College - ICT Unit</div>
         <div class="developer-credit">Project by <span class="highlight">ICT Education Piasa</span> - Sathira S. Rathnayake</div>
     </footer>
 
     <script>
-        /*
-          Updated Data Structure:
-          Now includes an array for 'benefits' for structured display.
-        */
-const plantData = {
-    // --- ඔසු උයන ---
-    "aralu": { 
-        title: "අරළු", scientific: "Terminalia chebula", image: "images/aralu.jpg", 
-        description: "ආයුර්වේදයේ 'ත්‍රිඵලා' සංයෝගයට අයත් වන ප්‍රධාන ඖෂධීය ශාකයකි. මෙහි ගෙඩි ඉතා ඉහළ ඖෂධීය වටිනාකමකින් යුක්ත වේ.", 
-        benefits: ["ආහාර ජීර්ණ පද්ධතියේ රෝග සුව කරයි.", "ශරීරයේ ප්‍රතිශක්තිය වර්ධනය කරයි.", "ඇස් පෙනීම වර්ධනය කිරීමට උපකාරී වේ."] 
-    },
-    "araththa": { 
-        title: "අරත්ත", scientific: "Alpinia calcarata", image: "images/araththa.jpg", 
-        description: "ඉඟුරු පවුලට අයත්, දේශීය වෙදකමේදී බහුලව යොදාගන්නා පඳුරු සහිත ශාකයකි. මෙහි අල ඖෂධ සඳහා ගනී.", 
-        benefits: ["සෙම් රෝග සහ කැස්ස සමනය කරයි.", "සන්ධි රෝග සහ වාත රෝග සඳහා ගුණදායකය.", "කටහඬ මිහිරි කිරීමට උපකාරී වේ."] 
-    },
-    "adathoda": { 
-        title: "ආඩතෝඩා", scientific: "Justicia adhatoda", image: "images/adathoda.jpg", 
-        description: "විශේෂයෙන්ම ශ්වසන ආබාධ සඳහා ප්‍රතිකාර කිරීමට යොදාගන්නා ඉතා ජනප්‍රිය ඖෂධීය ශාකයකි.", 
-        benefits: ["කැස්ස, ඇදුම සහ පීනස සුව කරයි.", "පෙනහළු වල සෙම ඉවත් කිරීමට උපකාරී වේ.", "ලේ පිරිසිදු කිරීමේ ගුණයෙන් යුක්තය."] 
-    },
-    "akkapana": { 
-        title: "අක්කාපාන", scientific: "Kalanchoe pinnata", image: "images/akkapana.jpg", 
-        description: "පත්‍ර මගින් නව ශාක බෝවන මාංශල පත්‍ර සහිත කුඩා ශාකයකි. මෙහි පත්‍ර ඖෂධ සඳහා යොදා ගනී.", 
-        benefits: ["මුත්‍රාශයේ සහ වකුගඩු වල ගල් දිය කිරීමට ප්‍රත්‍යක්ෂ ඔසුවකි.", "තුවාල සහ පිළිස්සුම් ඉක්මනින් සුව කරයි.", "ලේ ගැලීම් පාලනය කිරීමට උපකාරී වේ."] 
-    },
-    "bin_kohomba": { 
-        title: "බිං කොහොඹ", scientific: "Andrographis paniculata", image: "images/bin_kohomba.jpg", 
-        description: "කොහොඹ මෙන් තිත්ත රසයකින් යුත්, කුඩා පැළෑටියකි. මෙය 'හීන් කොහොඹ' ලෙසද හැඳින්වේ.", 
-        benefits: ["උණ සහ සෙම්ප්‍රතිශ්‍යාව සුව කිරීමට ප්‍රබලව ක්‍රියා කරයි.", "ශරීරයේ ප්‍රතිශක්තිකරණ පද්ධතිය ශක්තිමත් කරයි.", "අක්මාවේ නිරෝගීභාවය ආරක්ෂා කරයි."] 
-    },
-    "bin_pol": { 
-        title: "බිං පොල්", scientific: "Trichosanthes cucumerina", image: "images/bin_pol.jpg", 
-        description: "දේශීය ආයුර්වේදයේදී උණ රෝග සඳහා බහුලවම භාවිත කරන වැල් වර්ගයකි.", 
-        benefits: ["විවිධ උණ රෝග සමනය කිරීමට යොදා ගනී.", "ශරීරයේ දැවිල්ල අඩු කරයි.", "ආහාර රුචිය වර්ධනය කරයි."] 
-    },
-    "batakirilla": { 
-        title: "බටකිරිල්ල", scientific: "Aerva lanata", image: "images/batakirilla.jpg", 
-        description: "කුඩා සුදු පැහැති මල් හටගන්නා, ශ්‍රී ලංකාවේ වියළි කලාපයේ බහුලව වැවෙන ඖෂධීය පැළෑටියකි.", 
-        benefits: ["මුත්‍රා ආබාධ සුව කිරීමට යොදා ගනී.", "ශරීරයේ විෂ ඉවත් කිරීමට උපකාරී වේ.", "සමේ රෝග සඳහා ගුණදායකය."] 
-    },
-    "bulu": { 
-        title: "බුළු", scientific: "Terminalia bellirica", image: "images/bulu.jpg", 
-        description: "ත්‍රිඵලා සංයෝගයට අයත් තවත් එක් ප්‍රධාන ශාකයකි. විශාලව වැඩෙන ගසකි.", 
-        benefits: ["කැස්ස සහ උගුරේ ආබාධ සුව කරයි.", "ඇස් වල නිරෝගීභාවය ආරක්ෂා කරයි.", "හිසකෙස් වර්ධනයට උපකාරී වේ."] 
-    },
-    "inguru": { 
-        title: "ඉඟුරු", scientific: "Zingiber officinale", image: "images/inguru.jpg", 
-        description: "ආහාර රස ගැන්වීමට මෙන්ම ඖෂධයක් ලෙසද දෛනිකව භාවිතා කරන ප්‍රකට කුළුබඩුවකි.", 
-        benefits: ["ආහාර දිරවීම පහසු කරයි.", "සෙම්ප්‍රතිශ්‍යාව සහ උගුරේ අමාරු සුව කරයි.", "ශරීරයේ වේදනා නාශකයක් ලෙස ක්‍රියා කරයි."] 
-    },
-    "inguru_piyali": { 
-        title: "ඉඟුරු පියලි", scientific: "Kaempferia galanga", image: "images/inguru_piyali.jpg", 
-        description: "ඉඟුරු පවුලට අයත්, බිමටම ඇලී වැඩෙන පත්‍ර සහිත කුඩා ඖෂධීය ශාකයකි.", 
-        benefits: ["උගුරේ ආබාධ සහ කැස්ස සමනය කරයි.", "මුඛයේ දුර්ගන්ධය නැති කරයි.", "කෘමි දෂ්ට කිරීම් වලදී විෂ නැසීමට යොදා ගනී."] 
-    },
-    "garudaraja": { 
-        title: "ගරුඬරාජ", scientific: "Ophioglossum reticulatum", image: "images/garudaraja.jpg", 
-        description: "පර්ණාංග කුලයට අයත්, දුර්ලභ ගණයේ වටිනා ඖෂධීය පැළෑටියකි.", 
-        benefits: ["විෂ ශරීරගත වූ විට විෂ නැසීමට යොදා ගනී.", "තුවාල ඉක්මනින් සුවපත් කරයි.", "සමේ ආබාධ සඳහා ගුණදායකය."] 
-    },
-    "heen_bowitiya": { 
-        title: "හීන්බෝවිටියා", scientific: "Osbeckia octandra", image: "images/heen_bowitiya.jpg", 
-        description: "ශ්‍රී ලංකාවට ආවේණික, දම් පැහැති අලංකාර මල් හටගන්නා වටිනා ඖෂධීය පඳුරකි.", 
-        benefits: ["අක්මා රෝග සහ සෙංගමාලය සුව කිරීමට ඉතාමත් ගුණදායකය.", "දියවැඩියාව පාලනය කිරීමට උපකාරී වේ.", "ශරීරයේ ප්‍රතිශක්තිය වඩවයි."] 
-    },
-    "hathawariya": { 
-        title: "හාතාවාරිය", scientific: "Asparagus racemosus", image: "images/hathawariya.jpg", 
-        description: "කටු සහිත, සිහින් පත්‍ර ඇති ආරෝහක ශාකයකි. කැඳ සෑදීම සඳහා බහුලව යොදා ගනී.", 
-        benefits: ["ශරීරය නිවා දැමීමේ (සිසිල් කිරීමේ) ගුණයෙන් යුක්තය.", "කාන්තා රෝග සඳහා විශේෂ ගුණයක් පෙන්වයි.", "මතක ශක්තිය වර්ධනය කරයි."] 
-    },
-    "kadupahara": { 
-        title: "කඩුපහර", scientific: "Emilia sonchifolia", image: "images/kadupahara.jpg", 
-        description: "කුඩා දම් පැහැති මල් හටගන්නා, ඉතා ඉක්මනින් වර්ධනය වන ඖෂධීය පැළෑටියකි.", 
-        benefits: ["ඇස් රෝග සඳහා යොදා ගන්නා ප්‍රධාන ඔසුවකි.", "තුවාල සහ ගෙඩි සුව කිරීමට උපකාරී වේ.", "උණ රෝග සමනය කරයි."] 
-    },
-    "kapparawalliya": { 
-        title: "කප්පරවල්ලිය", scientific: "Plectranthus amboinicus", image: "images/kapparawalliya.jpg", 
-        description: "සුවඳවත්, මාංශල පත්‍ර සහිත පැළෑටියකි. කුඩා දරුවන්ගේ රෝග සඳහා බහුලව භාවිතා වේ.", 
-        benefits: ["කුඩා දරුවන්ගේ සෙම් රෝග සහ කැස්ස සුව කරයි.", "උදරයේ වාතය පිරීම සහ බඩේ අමාරු සමනය කරයි.", "ආහාර රුචිය වර්ධනය කරයි."] 
-    },
-    "kohomba": { 
-        title: "කොහොඹ", scientific: "Azadirachta indica", image: "images/kohomba.jpg", 
-        description: "මෙම ශාකයේ කොළ, මුල්, පොතු, මල්, ගෙඩි සහ ඇට යන සියලුම කොටස් ඖෂධ සඳහා යොදා ගනී.", 
-        benefits: ["සමේ රෝග සහ තුවාල සුව කිරීමට උපකාරී වේ.", "විෂබීජ නාශකයක් ලෙස ක්‍රියා කරයි.", "ලේ පිරිසිදු කිරීමට උපකාරී වන ප්‍රබල ඔසුවකි."] 
-    },
-    "komarika": { 
-        title: "කෝමාරිකා", scientific: "Aloe vera", image: "images/komarika.jpg", 
-        description: "මාංශල පත්‍ර සහිත, ජලය ගබඩා කර තබා ගන්නා ඉතා ජනප්‍රිය ඖෂධීය ශාකයකි.", 
-        benefits: ["සමේ තෙතමනය ආරක්ෂා කර සම පැහැපත් කරයි.", "පිළිස්සුම් තුවාල ඉක්මනින් සුව කරයි.", "හිසකෙස් වර්ධනයට සහ හිස්හොරි මර්දනයට ගුණදායකය."] 
-    },
-    "katakala": { 
-        title: "කැටකෑල", scientific: "Bridelia retusa", image: "images/katakala.jpg", 
-        description: "විශාලව වැඩෙන වටිනා දැව මෙන්ම ඖෂධීය ගසකි. මෙහි පොතු සහ කොළ වෙදකමට ගනී.", 
-        benefits: ["සර්ප විෂට ප්‍රතිකාර කිරීමේදී භාවිතා වේ.", "තුවාල සහ කුෂ්ඨ රෝග සුව කරයි.", "අස්ථි බිඳීම් වලදී පත්තු බැඳීමට යොදා ගනී."] 
-    },
-    "katukarosana": { 
-        title: "කටුකරෝසන", scientific: "Picrorhiza kurroa", image: "images/katukarosana.jpg", 
-        description: "ඉතා තිත්ත රසයකින් යුත්, ආයුර්වේදයේ වැදගත් ස්ථානයක් හිමි ඖෂධීය ශාකයකි.", 
-        benefits: ["අක්මාවේ ක්‍රියාකාරීත්වය යථා තත්ත්වයට පත් කරයි.", "පණු රෝග සහ උණ සමනය කරයි.", "ලේ පිරිසිදු කර සමේ රෝග සුව කරයි."] 
-    },
-    "kaha": { 
-        title: "කහ", scientific: "Curcuma longa", image: "images/kaha.jpg", 
-        description: "ආහාර වර්ණ ගැන්වීමට මෙන්ම ප්‍රබල විෂබීජ නාශකයක් ලෙස භාවිතා කරන භූගත කඳක් සහිත ශාකයකි.", 
-        benefits: ["ප්‍රබල ස්වභාවික විෂබීජ නාශකයක් ලෙස ක්‍රියා කරයි.", "සම පැහැපත් කිරීමට සහ සමේ රෝග වලට ගුණදායකය.", "ශරීරයේ අභ්‍යන්තර තුවාල සහ දැවිල්ල සුව කරයි."] 
-    },
-    "thebu": { 
-        title: "තෙඹු", scientific: "Costus speciosus", image: "images/thebu.jpg", 
-        description: "සුදු පැහැති අලංකාර මල් හටගන්නා, පඳුරක් ලෙස වැඩෙන ඖෂධීය ශාකයකි. මෙහි පත්‍ර මැල්ලුම් ලෙසද ආහාරයට ගනී.", 
-        benefits: ["රුධිරයේ සීනි මට්ටම (දියවැඩියාව) පාලනය කිරීමට ඉතා ගුණදායකය.", "මුත්‍රා ආබාධ සුව කිරීමට උපකාරී වේ.", "අක්මාවේ නිරෝගීභාවයට හිතකරය."] 
-    },
-    "lunuwila": { 
-        title: "ලුණුවිල", scientific: "Bacopa monnieri", image: "images/lunuwila.jpg", 
-        description: "ජලාශ්‍රිතව හෝ තෙතමනය සහිත ස්ථාන වල බිමට ඇලී වැඩෙන කුඩා පැළෑටියකි.", 
-        benefits: ["මතක ශක්තිය සහ බුද්ධි වර්ධනයට ඉතාමත් ගුණදායක ඔසුවකි.", "මානසික ආතතිය සහ සිතේ නොසන්සුන් බව දුරු කරයි.", "ස්නායු පද්ධතියේ ක්‍රියාකාරීත්වය වර්ධනය කරයි."] 
-    },
-    "mayurapada": { 
-        title: "මයුරපාද", scientific: "Actiniopteris radiata", image: "images/mayurapada.jpg", 
-        description: "මොණරකුගේ පාදයක හැඩය ගත් පත්‍ර සහිත, පර්ණාංග කුලයට අයත් කුඩා ශාකයකි.", 
-        benefits: ["සර්ප විෂට ප්‍රතිකාර කිරීමේදී යොදා ගනී.", "තුවාල ඉක්මනින් සුව කිරීමට උපකාරී වේ.", "උණ රෝග සඳහා දේශීය වෙදකමේදී භාවිත කෙරේ."] 
-    },
-    "monarakudumbiya": { 
-        title: "මොණරකුඩුම්බිය", scientific: "Cyanthillium cinereum", image: "images/monarakudumbiya.jpg", 
-        description: "දම් පැහැති කුඩා මල් හටගන්නා, පරිසරයේ බහුලව දක්නට ලැබෙන ඖෂධීය පැළෑටියකි.", 
-        benefits: ["සෙම් රෝග සහ කැස්ස සමනය කිරීමට ගුණදායකය.", "ශරීරයේ උෂ්ණය අඩු කර සිසිලස ලබා දෙයි.", "අක්මාව ආශ්‍රිත රෝග වලට යොදා ගනී."] 
-    },
-    "mee": { 
-        title: "මී", scientific: "Madhuca longifolia", image: "images/mee.jpg", 
-        description: "ග්‍රාමීය පරිසරයේ මෙන්ම කුඹුරු ආශ්‍රිතව දැකිය හැකි, විශාලව වැඩෙන වටිනා ශාකයකි. මී තෙල් සිඳීමට මෙහි ඇට ගනී.", 
-        benefits: ["සන්ධි ආබාධ සහ වාත රෝග සඳහා මී තෙල් ආලේප කෙරේ.", "සමේ රෝග සුව කිරීමට ගුණදායකය.", "ගසින් නිකුත් කරන වාතය පරිසරය පිරිසිදු කරයි."] 
-    },
-    "midi": { 
-        title: "මිදි", scientific: "Premna serratifolia", image: "images/midi.jpg", 
-        description: "ආයුර්වේදයේ 'දශමූල' (මුල් දහයක්) සංයෝගයට අයත් වන වටිනා ඖෂධීය පඳුරු ශාකයකි.", 
-        benefits: ["වාත රෝග සහ සන්ධි ඉදිමුම් සුව කිරීමට යොදා ගනී.", "ස්නායු දුර්වලතා මගහරවා ශරීරය ශක්තිමත් කරයි.", "උණ රෝග සමනය කිරීමට උපකාරී වේ."] 
-    },
-    "madurutala": { 
-        title: "මදුරුතලා", scientific: "Ocimum gratissimum", image: "images/madurutala.jpg", 
-        description: "තද සුවඳකින් යුත්, මදුරුවන් පලවා හැරීමට ස්වභාවිකව භාවිතා කළ හැකි පඳුරු ශාකයකි.", 
-        benefits: ["සෙම්ප්‍රතිශ්‍යාව සහ හිසරදය ඉක්මනින් සුව කරයි.", "මදුරුවන් සහ කෘමීන් පලවා හැරීමට උපකාරී වේ.", "ආහාර ජීර්ණය පහසු කරවන ඔසුවකි."] 
-    },
-    "ranwan_katukarandu": { 
-        title: "රන්වන් කටු කරඬු", scientific: "Barleria prionitis", image: "images/ranwan_katukarandu.jpg", 
-        description: "කහ පැහැති අලංකාර මල් සහ තියුණු කටු සහිත වටිනා ඖෂධීය පඳුරකි.", 
-        benefits: ["දත් කැක්කුම සහ විදුරුමස් දියවීම සුව කිරීමට ප්‍රත්‍යක්ෂ ඔසුවකි.", "වාත රෝග සහ සන්ධි වේදනා සමනය කරයි.", "තුවාල සහ කුෂ්ඨ සුව කිරීමට යොදා ගනී."] 
-    },
-    "polpala": { 
-        title: "පොල්පලා", scientific: "Aerva lanata", image: "images/polpala.jpg", 
-        description: "සුදු පැහැති මල් පොකුරු හටගන්නා, ඖෂධීය පානයක් ලෙස බහුලව භාවිත කරන පැළෑටියකි.", 
-        benefits: ["මුත්‍රා ගල් දියකිරීමට සහ මුත්‍රා ආබාධ සුව කිරීමට ඉතා ගුණදායකය.", "ශරීරයේ ඇති විෂ ද්‍රව්‍ය ඉවත් කර ලේ පිරිසිදු කරයි.", "පණු රෝග සඳහා ප්‍රතිකාර කිරීමට යොදා ගනී."] 
-    },
-    "rasakinda": { 
-        title: "රසකිඳ", scientific: "Tinospora cordifolia", image: "images/rasakinda.jpg", 
-        description: "හෘදාකාර පත්‍ර සහිත, වෙනත් ගස් මත යැපෙන වටිනා ඖෂධීය වැල් වර්ගයකි.", 
-        benefits: ["ශරීරයේ ප්‍රතිශක්තිය ඉතා වේගයෙන් වර්ධනය කරයි.", "උණ රෝග සහ ශරීරයේ දැවිල්ල සමනය කරයි.", "ලේ පිරිසිදු කර සමේ පැහැය වර්ධනය කරයි."] 
-    },
-    "yakinaram": { 
-        title: "යකිනාරං", scientific: "Atalantia ceylanica", image: "images/yakinaram.jpg", 
-        description: "කුඩා කොළ සහ තියුණු කටු සහිත, පැඟිරි කුලයට අයත් පඳුරු ශාකයකි.", 
-        benefits: ["සෙම් රෝග, පීනස සහ කැස්ස සුව කිරීමට ඉතාමත් ගුණදායකය.", "ආහාර රුචිය වර්ධනය කරයි.", "විෂබීජ නාශක ගුණයෙන් යුක්තය."] 
-    },
-    "weralu": { 
-        title: "වෙරළු", scientific: "Elaeocarpus serratus", image: "images/weralu.jpg", 
-        description: "රසවත් පලතුරක් මෙන්ම දේශීය වෙදකමේදී බහුලව භාවිතා වන මධ්‍යම ප්‍රමාණයේ ගසකි.", 
-        benefits: ["අතීසාරය සහ උදරයේ ආබාධ සුව කිරීමට යොදා ගනී.", "පත්‍ර යුෂ හිසකෙස් වල නිරෝගීභාවයට සහ උකුණන් මර්දනයට ඉතා හොඳයි.", "ශරීරයට සිසිලස ලබා දෙන පලතුරකි."] 
-    },
+        // Default Image if no image found
+        const fallbackImg = "https://images.unsplash.com/photo-1533038590840-1cbea6d6d48e?q=80&w=800&auto=format&fit=crop";
 
-    // --- වෙනත් ශාක (පාසල් භූමියේ ඇති) ---
-    "araliya": { 
-        title: "අරලිය", scientific: "Plumeria rubra", image: "images/araliya.jpg", 
-        description: "සුවඳවත් මල් හටගන්නා අලංකාර ශාකයකි. මල් වල හැඩය සහ වර්ණය අනුව ප්‍රභේද කිහිපයක් ඇත.", 
-        benefits: ["පරිසරය අලංකාර කිරීමට යොදා ගනී.", "ආගමික කටයුතු සඳහා මල් බහුලව භාවිතා වේ.", "සමහර ප්‍රභේද වල කිරි සහ පොතු දේශීය වෙදකමට ගනී."] 
-    },
-    "thekka": { 
-        title: "තේක්ක", scientific: "Tectona grandis", image: "images/thekka.jpg", 
-        description: "ඉතා ශක්තිමත් සහ කල්පවතින දැව ලබාදෙන, ශ්‍රී ලංකාවේ ආර්ථික වටිනාකමක් ඇති විශාල ගසකි.", 
-        benefits: ["ගෘහ භාණ්ඩ සහ ගොඩනැගිලි ඉදිකිරීම සඳහා ඉතා වටිනා දැව ලබා දෙයි.", "පරිසරයේ උෂ්ණත්වය පාලනය කිරීමට උපකාරී වේ."] 
-    },
-    "amba": { 
-        title: "අඹ", scientific: "Mangifera indica", image: "images/amba.jpg", 
-        description: "ශ්‍රී ලංකාවේ බහුලවම වැවෙන සහ ජනප්‍රියම පලතුරු ගසකි. මෙය සෙවන ලබා දෙන විශාල ගසක් ලෙස වැඩේ.", 
-        benefits: ["විටමින් A සහ C බහුල රසවත් පලතුරක් ලබා දෙයි.", "පරිසරයට හොඳ සෙවනක් ලබා දෙයි.", "අඹ පොතු සහ කොළ විවිධ ආයුර්වේද ප්‍රතිකාර සඳහා යොදා ගනී."] 
-    },
-    "pihimbiya": { 
-        title: "පිහිඹියා", scientific: "Filicium decipiens", image: "images/pihimbiya.jpg", 
-        description: "අලංකාර පත්‍ර රටාවක් සහිත, සෙවන ලබාදීම සඳහා මාර්ග දෙපස බහුලව වගා කරන ගසකි.", 
-        benefits: ["අධික සෙවනක් ලබා දෙන බැවින් පාසල් භූමි වලට ඉතා සුදුසුය.", "පරිසරය සිසිල්ව තබා ගැනීමට උපකාරී වේ.", "හොඳ දැවයක් ලෙසද ප්‍රයෝජනයට ගත හැක."] 
-    },
-    "mahogani": { 
-        title: "මහෝගනී", scientific: "Swietenia macrophylla", image: "images/mahogani.jpg", 
-        description: "සෘජුව ඉහළට වැඩෙන, ආර්ථික වටිනාකමක් සහිත දැව ලබා දෙන විශාල වන වගා ශාකයකි.", 
-        benefits: ["ඉතා වටිනා සහ අලංකාර ගෘහ භාණ්ඩ සෑදීමට දැව ලබා දෙයි.", "වාතයේ ඇති කාබන්ඩයොක්සයිඩ් විශාල වශයෙන් උරා ගනී.", "පරිසර අලංකරණයට සුදුසුය."] 
-    },
-    "kottamba": { 
-        title: "කොට්ටම්බා", scientific: "Terminalia catappa", image: "images/kottamba.jpg", 
-        description: "තට්ටු ආකාරයට අතු විහිදෙන, විශාල පත්‍ර සහිත සෙවන ලබා දෙන ගසකි. ගෙඩි වල ඇති මදය ආහාරයට ගනී.", 
-        benefits: ["විශාල භූමි ප්‍රමාණයකට තද සෙවනක් ලබා දෙයි.", "කොට්ටම්බා මදය පෝෂ්‍යදායී ආහාරයකි.", "වියළි පත්‍ර ජලයේ දැමීමෙන් ජලය පිරිසිදු වන බව විශ්වාස කෙරේ."] 
-    },
-    "pol": { 
-        title: "පොල්", scientific: "Cocos nucifera", image: "images/pol.jpg", 
-        description: "ශ්‍රී ලාංකිකයින්ගේ 'කප්රුක' ලෙස සැලකෙන, ගසේ සෑම කොටසක්ම ප්‍රයෝජනයට ගත හැකි වටිනා ශාකයකි.", 
-        benefits: ["ආහාර සහ තෙල් ලබා ගැනීම සඳහා ප්‍රධාන වශයෙන් භාවිතා වේ.", "පොල් අතු, ලෙලි සහ කඳ විවිධ කර්මාන්ත සඳහා යොදා ගනී.", "කුරුම්බා යනු ඉතා ගුණදායක ස්වභාවික පානයකි."] 
-    },
-    "kos": { 
-        title: "කොස්", scientific: "Artocarpus heterophyllus", image: "images/kos.jpg", 
-        description: "'බත් ගස' ලෙස විරුදාවලිය ලත්, ලෝකයේ විශාලතම පලතුර හටගන්නා සුවිශාල ගසකි.", 
-        benefits: ["ප්‍රධාන ආහාරයක් මෙන්ම පලතුරක් ලෙසද ප්‍රයෝජනවත් වේ.", "ඉතා ශක්තිමත් සහ වටිනා දැව ලබා දෙයි.", "පරිසරයට සෙවන සහ සිසිලස ලබා දෙයි."] 
-    },
-    "kumbuk": { 
-        title: "කුඹුක්", scientific: "Terminalia arjuna", image: "images/kumbuk.jpg", 
-        description: "ගංගා සහ ඇළ දොළ ඉවුරු වල බහුලව වැඩෙන, විශාල කඳක් සහිත දැවැන්ත ගසකි.", 
-        benefits: ["ජලය පිරිසිදු කිරීමේ සහ රඳවා ගැනීමේ විශේෂ හැකියාවක් ඇත.", "හෘද රෝග සඳහා ආයුර්වේද ප්‍රතිකාර වලදී කුඹුක් පොතු භාවිතා කෙරේ.", "ඉවුරු ඛාදනය වීම වළක්වයි."] 
-    },
-    "jambu": { 
-        title: "ජම්බු", scientific: "Syzygium samarangense", image: "images/jambu.jpg", 
-        description: "රෝස සහ රතු පැහැති ජලීය රසවත් පලතුරක් හටගන්නා ගසකි.", 
-        benefits: ["විටමින් C බහුල රසවත් පලතුරකි.", "ශරීරයේ උෂ්ණය අඩු කර සිසිලස ලබා දෙයි.", "පරිසරය අලංකාර කරන සෙවන සහිත ගසකි."] 
-    },
-    "na": { 
-        title: "නා", scientific: "Mesua ferrea", image: "images/na.jpg", 
-        description: "ශ්‍රී ලංකාවේ ජාතික වෘක්ෂයයි. රතු පැහැති ළපටි පත්‍ර සහ සුදු පැහැති සුවඳවත් මල් හටගන්නා අලංකාර ගසකි.", 
-        benefits: ["සර්ප විෂට සහ අර්ශස් රෝග සඳහා දේශීය වෙදකමේදී මල් සහ රේණු යොදා ගනී.", "ඉතා ශක්තිමත්, කල්පවතින දැවයක් ලබා දෙයි.", "පරිසරයට අධික සිසිලසක් සහ සෙවනක් ලබා දෙයි."] 
-    },
-    "ahala": { 
-        title: "ඇහැල", scientific: "Cassia fistula", image: "images/ahala.jpg", 
-        description: "මල් පිපෙන කාලයට සම්පූර්ණ ගසම කහ පැහැති මල් පොකුරු වලින් වැසී යන ඉතා අලංකාර ගසකි.", 
-        benefits: ["පරිසරය අලංකාර කිරීම සඳහා මාර්ග දෙපස බහුලව වගා කෙරේ.", "ආයුර්වේදයේදී මලබද්ධය සහ සමේ රෝග සුව කිරීමට යොදා ගනී.", "ශක්තිමත් දැවයක් ලබා දෙයි."] 
-    },
-    "nelli": { 
-        title: "නෙල්ලි", scientific: "Phyllanthus emblica", image: "images/nelli.jpg", 
-        description: "විටමින් C ඉතා විශාල ප්‍රමාණයක් අඩංගු, කුඩා කොළ සහ ඇඹුල්/තිත්ත රසැති පලතුරක් සහිත ගසකි.", 
-        benefits: ["ශරීරයේ ප්‍රතිශක්තිය ඉතා ඉහළ නංවන පලතුරකි.", "රුධිරය පිරිසිදු කර සමේ පැහැය වර්ධනය කරයි.", "ආයුර්වේදයේ 'ත්‍රිඵලා' සංයෝගයේ ප්‍රධාන අඩංගු ද්‍රව්‍යයකි."] 
-    }
-};
+        const plantData = {
+            // --- ඔසු උයන ---
+            "aralu": { 
+                title: "අරළු", scientific: "Terminalia chebula", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Terminalia_chebula_-_Aralu_%2845233157071%29.jpg/800px-Terminalia_chebula_-_Aralu_%2845233157071%29.jpg", 
+                description: "ආයුර්වේදයේ 'ත්‍රිඵලා' සංයෝගයට අයත් වන ප්‍රධාන ඖෂධීය ශාකයකි. මෙහි ගෙඩි ඉතා ඉහළ ඖෂධීය වටිනාකමකින් යුක්ත වේ.", 
+                benefits: ["ආහාර ජීර්ණ පද්ධතියේ රෝග සුව කරයි.", "ශරීරයේ ප්‍රතිශක්තිය වර්ධනය කරයි.", "ඇස් පෙනීම වර්ධනය කිරීමට උපකාරී වේ."] 
+            },
+            "araththa": { 
+                title: "අරත්ත", scientific: "Alpinia calcarata", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Alpinia_calcarata_01.JPG/800px-Alpinia_calcarata_01.JPG", 
+                description: "ඉඟුරු පවුලට අයත්, දේශීය වෙදකමේදී බහුලව යොදාගන්නා පඳුරු සහිත ශාකයකි. මෙහි අල ඖෂධ සඳහා ගනී.", 
+                benefits: ["සෙම් රෝග සහ කැස්ස සමනය කරයි.", "සන්ධි රෝග සහ වාත රෝග සඳහා ගුණදායකය.", "කටහඬ මිහිරි කිරීමට උපකාරී වේ."] 
+            },
+            "adathoda": { 
+                title: "ආඩතෝඩා", scientific: "Justicia adhatoda", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Justicia_adhatoda_1.jpg/800px-Justicia_adhatoda_1.jpg", 
+                description: "විශේෂයෙන්ම ශ්වසන ආබාධ සඳහා ප්‍රතිකාර කිරීමට යොදාගන්නා ඉතා ජනප්‍රිය ඖෂධීය ශාකයකි.", 
+                benefits: ["කැස්ස, ඇදුම සහ පීනස සුව කරයි.", "පෙනහළු වල සෙම ඉවත් කිරීමට උපකාරී වේ.", "ලේ පිරිසිදු කිරීමේ ගුණයෙන් යුක්තය."] 
+            },
+            "akkapana": { 
+                title: "අක්කාපාන", scientific: "Kalanchoe pinnata", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Kalanchoe_pinnata.jpg/800px-Kalanchoe_pinnata.jpg", 
+                description: "පත්‍ර මගින් නව ශාක බෝවන මාංශල පත්‍ර සහිත කුඩා ශාකයකි. මෙහි පත්‍ර ඖෂධ සඳහා යොදා ගනී.", 
+                benefits: ["මුත්‍රාශයේ සහ වකුගඩු වල ගල් දිය කිරීමට ප්‍රත්‍යක්ෂ ඔසුවකි.", "තුවාල සහ පිළිස්සුම් ඉක්මනින් සුව කරයි.", "ලේ ගැලීම් පාලනය කිරීමට උපකාරී වේ."] 
+            },
+            "bin_kohomba": { 
+                title: "බිං කොහොඹ", scientific: "Andrographis paniculata", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Andrographis_paniculata.jpg/800px-Andrographis_paniculata.jpg", 
+                description: "කොහොඹ මෙන් තිත්ත රසයකින් යුත්, කුඩා පැළෑටියකි. මෙය 'හීන් කොහොඹ' ලෙසද හැඳින්වේ.", 
+                benefits: ["උණ සහ සෙම්ප්‍රතිශ්‍යාව සුව කිරීමට ප්‍රබලව ක්‍රියා කරයි.", "ශරීරයේ ප්‍රතිශක්තිකරණ පද්ධතිය ශක්තිමත් කරයි.", "අක්මාවේ නිරෝගීභාවය ආරක්ෂා කරයි."] 
+            },
+            "bin_pol": { 
+                title: "බිං පොල්", scientific: "Trichosanthes cucumerina", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Snake_gourd_flower.jpg/800px-Snake_gourd_flower.jpg", 
+                description: "දේශීය ආයුර්වේදයේදී උණ රෝග සඳහා බහුලවම භාවිත කරන වැල් වර්ගයකි.", 
+                benefits: ["විවිධ උණ රෝග සමනය කිරීමට යොදා ගනී.", "ශරීරයේ දැවිල්ල අඩු කරයි.", "ආහාර රුචිය වර්ධනය කරයි."] 
+            },
+            "batakirilla": { 
+                title: "බටකිරිල්ල", scientific: "Aerva lanata", image: fallbackImg, 
+                description: "කුඩා සුදු පැහැති මල් හටගන්නා, ශ්‍රී ලංකාවේ වියළි කලාපයේ බහුලව වැවෙන ඖෂධීය පැළෑටියකි.", 
+                benefits: ["මුත්‍රා ආබාධ සුව කිරීමට යොදා ගනී.", "ශරීරයේ විෂ ඉවත් කිරීමට උපකාරී වේ.", "සමේ රෝග සඳහා ගුණදායකය."] 
+            },
+            "bulu": { 
+                title: "බුළු", scientific: "Terminalia bellirica", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Terminalia_bellirica_01.JPG/800px-Terminalia_bellirica_01.JPG", 
+                description: "ත්‍රිඵලා සංයෝගයට අයත් තවත් එක් ප්‍රධාන ශාකයකි. විශාලව වැඩෙන ගසකි.", 
+                benefits: ["කැස්ස සහ උගුරේ ආබාධ සුව කරයි.", "ඇස් වල නිරෝගීභාවය ආරක්ෂා කරයි.", "හිසකෙස් වර්ධනයට උපකාරී වේ."] 
+            },
+            "inguru": { 
+                title: "ඉඟුරු", scientific: "Zingiber officinale", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Zingiber_officinale_-_K%C3%B6hler%E2%80%93s_Medizinal-Pflanzen-283.jpg/800px-Zingiber_officinale_-_K%C3%B6hler%E2%80%93s_Medizinal-Pflanzen-283.jpg", 
+                description: "ආහාර රස ගැන්වීමට මෙන්ම ඖෂධයක් ලෙසද දෛනිකව භාවිතා කරන ප්‍රකට කුළුබඩුවකි.", 
+                benefits: ["ආහාර දිරවීම පහසු කරයි.", "සෙම්ප්‍රතිශ්‍යාව සහ උගුරේ අමාරු සුව කරයි.", "ශරීරයේ වේදනා නාශකයක් ලෙස ක්‍රියා කරයි."] 
+            },
+            "inguru_piyali": { 
+                title: "ඉඟුරු පියලි", scientific: "Kaempferia galanga", image: fallbackImg, 
+                description: "ඉඟුරු පවුලට අයත්, බිමටම ඇලී වැඩෙන පත්‍ර සහිත කුඩා ඖෂධීය ශාකයකි.", 
+                benefits: ["උගුරේ ආබාධ සහ කැස්ස සමනය කරයි.", "මුඛයේ දුර්ගන්ධය නැති කරයි.", "කෘමි දෂ්ට කිරීම් වලදී විෂ නැසීමට යොදා ගනී."] 
+            },
+            "garudaraja": { 
+                title: "ගරුඬරාජ", scientific: "Ophioglossum reticulatum", image: fallbackImg, 
+                description: "පර්ණාංග කුලයට අයත්, දුර්ලභ ගණයේ වටිනා ඖෂධීය පැළෑටියකි.", 
+                benefits: ["විෂ ශරීරගත වූ විට විෂ නැසීමට යොදා ගනී.", "තුවාල ඉක්මනින් සුවපත් කරයි.", "සමේ ආබාධ සඳහා ගුණදායකය."] 
+            },
+            "heen_bowitiya": { 
+                title: "හීන්බෝවිටියා", scientific: "Osbeckia octandra", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Osbeckia_octandra.jpg/800px-Osbeckia_octandra.jpg", 
+                description: "ශ්‍රී ලංකාවට ආවේණික, දම් පැහැති අලංකාර මල් හටගන්නා වටිනා ඖෂධීය පඳුරකි.", 
+                benefits: ["අක්මා රෝග සහ සෙංගමාලය සුව කිරීමට ඉතාමත් ගුණදායකය.", "දියවැඩියාව පාලනය කිරීමට උපකාරී වේ.", "ශරීරයේ ප්‍රතිශක්තිය වඩවයි."] 
+            },
+            "hathawariya": { 
+                title: "හාතාවාරිය", scientific: "Asparagus racemosus", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Asparagus_racemosus_in_Talakona_forest_1.jpg/800px-Asparagus_racemosus_in_Talakona_forest_1.jpg", 
+                description: "කටු සහිත, සිහින් පත්‍ර ඇති ආරෝහක ශාකයකි. කැඳ සෑදීම සඳහා බහුලව යොදා ගනී.", 
+                benefits: ["ශරීරය නිවා දැමීමේ (සිසිල් කිරීමේ) ගුණයෙන් යුක්තය.", "කාන්තා රෝග සඳහා විශේෂ ගුණයක් පෙන්වයි.", "මතක ශක්තිය වර්ධනය කරයි."] 
+            },
+            "kadupahara": { 
+                title: "කඩුපහර", scientific: "Emilia sonchifolia", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Lilac_Tasselflower_Emilia_sonchifolia.jpg/800px-Lilac_Tasselflower_Emilia_sonchifolia.jpg", 
+                description: "කුඩා දම් පැහැති මල් හටගන්නා, ඉතා ඉක්මනින් වර්ධනය වන ඖෂධීය පැළෑටියකි.", 
+                benefits: ["ඇස් රෝග සඳහා යොදා ගන්නා ප්‍රධාන ඔසුවකි.", "තුවාල සහ ගෙඩි සුව කිරීමට උපකාරී වේ.", "උණ රෝග සමනය කරයි."] 
+            },
+            "kapparawalliya": { 
+                title: "කප්පරවල්ලිය", scientific: "Plectranthus amboinicus", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Plectranthus_amboinicus_by_Kadavoor.jpg/800px-Plectranthus_amboinicus_by_Kadavoor.jpg", 
+                description: "සුවඳවත්, මාංශල පත්‍ර සහිත පැළෑටියකි. කුඩා දරුවන්ගේ රෝග සඳහා බහුලව භාවිතා වේ.", 
+                benefits: ["කුඩා දරුවන්ගේ සෙම් රෝග සහ කැස්ස සුව කරයි.", "උදරයේ වාතය පිරීම සහ බඩේ අමාරු සමනය කරයි.", "ආහාර රුචිය වර්ධනය කරයි."] 
+            },
+            "kohomba": { 
+                title: "කොහොඹ", scientific: "Azadirachta indica", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Azadirachta_indica_-_Neem_Tree.jpg/800px-Azadirachta_indica_-_Neem_Tree.jpg", 
+                description: "මෙම ශාකයේ කොළ, මුල්, පොතු, මල්, ගෙඩි සහ ඇට යන සියලුම කොටස් ඖෂධ සඳහා යොදා ගනී.", 
+                benefits: ["සමේ රෝග සහ තුවාල සුව කිරීමට උපකාරී වේ.", "විෂබීජ නාශකයක් ලෙස ක්‍රියා කරයි.", "ලේ පිරිසිදු කිරීමට උපකාරී වන ප්‍රබල ඔසුවකි."] 
+            },
+            "komarika": { 
+                title: "කෝමාරිකා", scientific: "Aloe vera", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Aloe_vera_flower_inset.png/800px-Aloe_vera_flower_inset.png", 
+                description: "මාංශල පත්‍ර සහිත, ජලය ගබඩා කර තබා ගන්නා ඉතා ජනප්‍රිය ඖෂධීය ශාකයකි.", 
+                benefits: ["සමේ තෙතමනය ආරක්ෂා කර සම පැහැපත් කරයි.", "පිළිස්සුම් තුවාල ඉක්මනින් සුව කරයි.", "හිසකෙස් වර්ධනයට සහ හිස්හොරි මර්දනයට ගුණදායකය."] 
+            },
+            "katakala": { 
+                title: "කැටකෑල", scientific: "Bridelia retusa", image: fallbackImg, 
+                description: "විශාලව වැඩෙන වටිනා දැව මෙන්ම ඖෂධීය ගසකි. මෙහි පොතු සහ කොළ වෙදකමට ගනී.", 
+                benefits: ["සර්ප විෂට ප්‍රතිකාර කිරීමේදී භාවිතා වේ.", "තුවාල සහ කුෂ්ඨ රෝග සුව කරයි.", "අස්ථි බිඳීම් වලදී පත්තු බැඳීමට යොදා ගනී."] 
+            },
+            "katukarosana": { 
+                title: "කටුකරෝසන", scientific: "Picrorhiza kurroa", image: fallbackImg, 
+                description: "ඉතා තිත්ත රසයකින් යුත්, ආයුර්වේදයේ වැදගත් ස්ථානයක් හිමි ඖෂධීය ශාකයකි.", 
+                benefits: ["අක්මාවේ ක්‍රියාකාරීත්වය යථා තත්ත්වයට පත් කරයි.", "පණු රෝග සහ උණ සමනය කරයි.", "ලේ පිරිසිදු කර සමේ රෝග සුව කරයි."] 
+            },
+            "kaha": { 
+                title: "කහ", scientific: "Curcuma longa", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Curcuma_longa_roots.jpg/800px-Curcuma_longa_roots.jpg", 
+                description: "ආහාර වර්ණ ගැන්වීමට මෙන්ම ප්‍රබල විෂබීජ නාශකයක් ලෙස භාවිතා කරන භූගත කඳක් සහිත ශාකයකි.", 
+                benefits: ["ප්‍රබල ස්වභාවික විෂබීජ නාශකයක් ලෙස ක්‍රියා කරයි.", "සම පැහැපත් කිරීමට සහ සමේ රෝග වලට ගුණදායකය.", "ශරීරයේ අභ්‍යන්තර තුවාල සහ දැවිල්ල සුව කරයි."] 
+            },
+            "thebu": { 
+                title: "තෙඹු", scientific: "Costus speciosus", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Costus_speciosus.jpg/800px-Costus_speciosus.jpg", 
+                description: "සුදු පැහැති අලංකාර මල් හටගන්නා, පඳුරක් ලෙස වැඩෙන ඖෂධීය ශාකයකි. මෙහි පත්‍ර මැල්ලුම් ලෙසද ආහාරයට ගනී.", 
+                benefits: ["රුධිරයේ සීනි මට්ටම (දියවැඩියාව) පාලනය කිරීමට ඉතා ගුණදායකය.", "මුත්‍රා ආබාධ සුව කිරීමට උපකාරී වේ.", "අක්මාවේ නිරෝගීභාවයට හිතකරය."] 
+            },
+            "lunuwila": { 
+                title: "ලුණුවිල", scientific: "Bacopa monnieri", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Bacopa_monnieri_-_Water_Hyssop.jpg/800px-Bacopa_monnieri_-_Water_Hyssop.jpg", 
+                description: "ජලාශ්‍රිතව හෝ තෙතමනය සහිත ස්ථාන වල බිමට ඇලී වැඩෙන කුඩා පැළෑටියකි.", 
+                benefits: ["මතක ශක්තිය සහ බුද්ධි වර්ධනයට ඉතාමත් ගුණදායක ඔසුවකි.", "මානසික ආතතිය සහ සිතේ නොසන්සුන් බව දුරු කරයි.", "ස්නායු පද්ධතියේ ක්‍රියාකාරීත්වය වර්ධනය කරයි."] 
+            },
+            "mayurapada": { 
+                title: "මයුරපාද", scientific: "Actiniopteris radiata", image: fallbackImg, 
+                description: "මොණරකුගේ පාදයක හැඩය ගත් පත්‍ර සහිත, පර්ණාංග කුලයට අයත් කුඩා ශාකයකි.", 
+                benefits: ["සර්ප විෂට ප්‍රතිකාර කිරීමේදී යොදා ගනී.", "තුවාල ඉක්මනින් සුව කිරීමට උපකාරී වේ.", "උණ රෝග සඳහා දේශීය වෙදකමේදී භාවිත කෙරේ."] 
+            },
+            "monarakudumbiya": { 
+                title: "මොණරකුඩුම්බිය", scientific: "Cyanthillium cinereum", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Cyanthillium_cinereum_flower_2.jpg/800px-Cyanthillium_cinereum_flower_2.jpg", 
+                description: "දම් පැහැති කුඩා මල් හටගන්නා, පරිසරයේ බහුලව දක්නට ලැබෙන ඖෂධීය පැළෑටියකි.", 
+                benefits: ["සෙම් රෝග සහ කැස්ස සමනය කිරීමට ගුණදායකය.", "ශරීරයේ උෂ්ණය අඩු කර සිසිලස ලබා දෙයි.", "අක්මාව ආශ්‍රිත රෝග වලට යොදා ගනී."] 
+            },
+            "mee": { 
+                title: "මී", scientific: "Madhuca longifolia", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Madhuca_longifolia_flower.jpg/800px-Madhuca_longifolia_flower.jpg", 
+                description: "ග්‍රාමීය පරිසරයේ මෙන්ම කුඹුරු ආශ්‍රිතව දැකිය හැකි, විශාලව වැඩෙන වටිනා ශාකයකි. මී තෙල් සිඳීමට මෙහි ඇට ගනී.", 
+                benefits: ["සන්ධි ආබාධ සහ වාත රෝග සඳහා මී තෙල් ආලේප කෙරේ.", "සමේ රෝග සුව කිරීමට ගුණදායකය.", "ගසින් නිකුත් කරන වාතය පරිසරය පිරිසිදු කරයි."] 
+            },
+            "midi": { 
+                title: "මිදි", scientific: "Premna serratifolia", image: fallbackImg, 
+                description: "ආයුර්වේදයේ 'දශමූල' (මුල් දහයක්) සංයෝගයට අයත් වන වටිනා ඖෂධීය පඳුරු ශාකයකි.", 
+                benefits: ["වාත රෝග සහ සන්ධි ඉදිමුම් සුව කිරීමට යොදා ගනී.", "ස්නායු දුර්වලතා මගහරවා ශරීරය ශක්තිමත් කරයි.", "උණ රෝග සමනය කිරීමට උපකාරී වේ."] 
+            },
+            "madurutala": { 
+                title: "මදුරුතලා", scientific: "Ocimum gratissimum", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Ocimum_gratissimum.jpg/800px-Ocimum_gratissimum.jpg", 
+                description: "තද සුවඳකින් යුත්, මදුරුවන් පලවා හැරීමට ස්වභාවිකව භාවිතා කළ හැකි පඳුරු ශාකයකි.", 
+                benefits: ["සෙම්ප්‍රතිශ්‍යාව සහ හිසරදය ඉක්මනින් සුව කරයි.", "මදුරුවන් සහ කෘමීන් පලවා හැරීමට උපකාරී වේ.", "ආහාර ජීර්ණය පහසු කරවන ඔසුවකි."] 
+            },
+            "ranwan_katukarandu": { 
+                title: "රන්වන් කටු කරඬු", scientific: "Barleria prionitis", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Barleria_prionitis.jpg/800px-Barleria_prionitis.jpg", 
+                description: "කහ පැහැති අලංකාර මල් සහ තියුණු කටු සහිත වටිනා ඖෂධීය පඳුරකි.", 
+                benefits: ["දත් කැක්කුම සහ විදුරුමස් දියවීම සුව කිරීමට ප්‍රත්‍යක්ෂ ඔසුවකි.", "වාත රෝග සහ සන්ධි වේදනා සමනය කරයි.", "තුවාල සහ කුෂ්ඨ සුව කිරීමට යොදා ගනී."] 
+            },
+            "polpala": { 
+                title: "පොල්පලා", scientific: "Aerva lanata", image: fallbackImg, 
+                description: "සුදු පැහැති මල් පොකුරු හටගන්නා, ඖෂධීය පානයක් ලෙස බහුලව භාවිත කරන පැළෑටියකි.", 
+                benefits: ["මුත්‍රා ගල් දියකිරීමට සහ මුත්‍රා ආබාධ සුව කිරීමට ඉතා ගුණදායකය.", "ශරීරයේ ඇති විෂ ද්‍රව්‍ය ඉවත් කර ලේ පිරිසිදු කරයි.", "පණු රෝග සඳහා ප්‍රතිකාර කිරීමට යොදා ගනී."] 
+            },
+            "rasakinda": { 
+                title: "රසකිඳ", scientific: "Tinospora cordifolia", image: fallbackImg, 
+                description: "හෘදාකාර පත්‍ර සහිත, වෙනත් ගස් මත යැපෙන වටිනා ඖෂධීය වැල් වර්ගයකි.", 
+                benefits: ["ශරීරයේ ප්‍රතිශක්තිය ඉතා වේගයෙන් වර්ධනය කරයි.", "උණ රෝග සහ ශරීරයේ දැවිල්ල සමනය කරයි.", "ලේ පිරිසිදු කර සමේ පැහැය වර්ධනය කරයි."] 
+            },
+            "yakinaram": { 
+                title: "යකිනාරං", scientific: "Atalantia ceylanica", image: fallbackImg, 
+                description: "කුඩා කොළ සහ තියුණු කටු සහිත, පැඟිරි කුලයට අයත් පඳුරු ශාකයකි.", 
+                benefits: ["සෙම් රෝග, පීනස සහ කැස්ස සුව කිරීමට ඉතාමත් ගුණදායකය.", "ආහාර රුචිය වර්ධනය කරයි.", "විෂබීජ නාශක ගුණයෙන් යුක්තය."] 
+            },
+            "weralu": { 
+                title: "වෙරළු", scientific: "Elaeocarpus serratus", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Elaeocarpus_serratus_Ceylon_olive.jpg/800px-Elaeocarpus_serratus_Ceylon_olive.jpg", 
+                description: "රසවත් පලතුරක් මෙන්ම දේශීය වෙදකමේදී බහුලව භාවිතා වන මධ්‍යම ප්‍රමාණයේ ගසකි.", 
+                benefits: ["අතීසාරය සහ උදරයේ ආබාධ සුව කිරීමට යොදා ගනී.", "පත්‍ර යුෂ හිසකෙස් වල නිරෝගීභාවයට සහ උකුණන් මර්දනයට ඉතා හොඳයි.", "ශරීරයට සිසිලස ලබා දෙන පලතුරකි."] 
+            },
+
+            // --- වෙනත් ශාක (පාසල් භූමියේ ඇති) ---
+            "araliya": { 
+                title: "අරලිය", scientific: "Plumeria rubra", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Plumeria_rubra_flower.jpg/800px-Plumeria_rubra_flower.jpg", 
+                description: "සුවඳවත් මල් හටගන්නා අලංකාර ශාකයකි. මල් වල හැඩය සහ වර්ණය අනුව ප්‍රභේද කිහිපයක් ඇත.", 
+                benefits: ["පරිසරය අලංකාර කිරීමට යොදා ගනී.", "ආගමික කටයුතු සඳහා මල් බහුලව භාවිතා වේ.", "සමහර ප්‍රභේද වල කිරි සහ පොතු දේශීය වෙදකමට ගනී."] 
+            },
+            "thekka": { 
+                title: "තේක්ක", scientific: "Tectona grandis", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Tectona_grandis.jpg/800px-Tectona_grandis.jpg", 
+                description: "ඉතා ශක්තිමත් සහ කල්පවතින දැව ලබාදෙන, ශ්‍රී ලංකාවේ ආර්ථික වටිනාකමක් ඇති විශාල ගසකි.", 
+                benefits: ["ගෘහ භාණ්ඩ සහ ගොඩනැගිලි ඉදිකිරීම සඳහා ඉතා වටිනා දැව ලබා දෙයි.", "පරිසරයේ උෂ්ණත්වය පාලනය කිරීමට උපකාරී වේ."] 
+            },
+            "amba": { 
+                title: "අඹ", scientific: "Mangifera indica", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Mango_tree_full.jpg/800px-Mango_tree_full.jpg", 
+                description: "ශ්‍රී ලංකාවේ බහුලවම වැවෙන සහ ජනප්‍රියම පලතුරු ගසකි. මෙය සෙවන ලබා දෙන විශාල ගසක් ලෙස වැඩේ.", 
+                benefits: ["විටමින් A සහ C බහුල රසවත් පලතුරක් ලබා දෙයි.", "පරිසරයට හොඳ සෙවනක් ලබා දෙයි.", "අඹ පොතු සහ කොළ විවිධ ආයුර්වේද ප්‍රතිකාර සඳහා යොදා ගනී."] 
+            },
+            "pihimbiya": { 
+                title: "පිහිඹියා", scientific: "Filicium decipiens", image: fallbackImg, 
+                description: "අලංකාර පත්‍ර රටාවක් සහිත, සෙවන ලබාදීම සඳහා මාර්ග දෙපස බහුලව වගා කරන ගසකි.", 
+                benefits: ["අධික සෙවනක් ලබා දෙන බැවින් පාසල් භූමි වලට ඉතා සුදුසුය.", "පරිසරය සිසිල්ව තබා ගැනීමට උපකාරී වේ.", "හොඳ දැවයක් ලෙසද ප්‍රයෝජනයට ගත හැක."] 
+            },
+            "mahogani": { 
+                title: "මහෝගනී", scientific: "Swietenia macrophylla", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Swietenia_macrophylla_-_Mahogany.jpg/800px-Swietenia_macrophylla_-_Mahogany.jpg", 
+                description: "සෘජුව ඉහළට වැඩෙන, ආර්ථික වටිනාකමක් සහිත දැව ලබා දෙන විශාල වන වගා ශාකයකි.", 
+                benefits: ["ඉතා වටිනා සහ අලංකාර ගෘහ භාණ්ඩ සෑදීමට දැව ලබා දෙයි.", "වාතයේ ඇති කාබන්ඩයොක්සයිඩ් විශාල වශයෙන් උරා ගනී.", "පරිසර අලංකරණයට සුදුසුය."] 
+            },
+            "kottamba": { 
+                title: "කොට්ටම්බා", scientific: "Terminalia catappa", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Terminalia_catappa_tree.jpg/800px-Terminalia_catappa_tree.jpg", 
+                description: "තට්ටු ආකාරයට අතු විහිදෙන, විශාල පත්‍ර සහිත සෙවන ලබා දෙන ගසකි. ගෙඩි වල ඇති මදය ආහාරයට ගනී.", 
+                benefits: ["විශාල භූමි ප්‍රමාණයකට තද සෙවනක් ලබා දෙයි.", "කොට්ටම්බා මදය පෝෂ්‍යදායී ආහාරයකි.", "වියළි පත්‍ර ජලයේ දැමීමෙන් ජලය පිරිසිදු වන බව විශ්වාස කෙරේ."] 
+            },
+            "pol": { 
+                title: "පොල්", scientific: "Cocos nucifera", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Coconut_Tree.jpg/800px-Coconut_Tree.jpg", 
+                description: "ශ්‍රී ලාංකිකයින්ගේ 'කප්රුක' ලෙස සැලකෙන, ගසේ සෑම කොටසක්ම ප්‍රයෝජනයට ගත හැකි වටිනා ශාකයකි.", 
+                benefits: ["ආහාර සහ තෙල් ලබා ගැනීම සඳහා ප්‍රධාන වශයෙන් භාවිතා වේ.", "පොල් අතු, ලෙලි සහ කඳ විවිධ කර්මාන්ත සඳහා යොදා ගනී.", "කුරුම්බා යනු ඉතා ගුණදායක ස්වභාවික පානයකි."] 
+            },
+            "kos": { 
+                title: "කොස්", scientific: "Artocarpus heterophyllus", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Jackfruit_tree.jpg/800px-Jackfruit_tree.jpg", 
+                description: "'බත් ගස' ලෙස විරුදාවලිය ලත්, ලෝකයේ විශාලතම පලතුර හටගන්නා සුවිශාල ගසකි.", 
+                benefits: ["ප්‍රධාන ආහාරයක් මෙන්ම පලතුරක් ලෙසද ප්‍රයෝජනවත් වේ.", "ඉතා ශක්තිමත් සහ වටිනා දැව ලබා දෙයි.", "පරිසරයට සෙවන සහ සිසිලස ලබා දෙයි."] 
+            },
+            "kumbuk": { 
+                title: "කුඹුක්", scientific: "Terminalia arjuna", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Terminalia_arjuna_-_Kumbuk_Tree.jpg/800px-Terminalia_arjuna_-_Kumbuk_Tree.jpg", 
+                description: "ගංගා සහ ඇළ දොළ ඉවුරු වල බහුලව වැඩෙන, විශාල කඳක් සහිත දැවැන්ත ගසකි.", 
+                benefits: ["ජලය පිරිසිදු කිරීමේ සහ රඳවා ගැනීමේ විශේෂ හැකියාවක් ඇත.", "හෘද රෝග සඳහා ආයුර්වේද ප්‍රතිකාර වලදී කුඹුක් පොතු භාවිතා කෙරේ.", "ඉවුරු ඛාදනය වීම වළක්වයි."] 
+            },
+            "jambu": { 
+                title: "ජම්බු", scientific: "Syzygium samarangense", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Syzygium_samarangense.jpg/800px-Syzygium_samarangense.jpg", 
+                description: "රෝස සහ රතු පැහැති ජලීය රසවත් පලතුරක් හටගන්නා ගසකි.", 
+                benefits: ["විටමින් C බහුල රසවත් පලතුරකි.", "ශරීරයේ උෂ්ණය අඩු කර සිසිලස ලබා දෙයි.", "පරිසරය අලංකාර කරන සෙවන සහිත ගසකි."] 
+            },
+            "na": { 
+                title: "නා", scientific: "Mesua ferrea", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Mesua_ferrea_-_Ironwood_tree.jpg/800px-Mesua_ferrea_-_Ironwood_tree.jpg", 
+                description: "ශ්‍රී ලංකාවේ ජාතික වෘක්ෂයයි. රතු පැහැති ළපටි පත්‍ර සහ සුදු පැහැති සුවඳවත් මල් හටගන්නා අලංකාර ගසකි.", 
+                benefits: ["සර්ප විෂට සහ අර්ශස් රෝග සඳහා දේශීය වෙදකමේදී මල් සහ රේණු යොදා ගනී.", "ඉතා ශක්තිමත්, කල්පවතින දැවයක් ලබා දෙයි.", "පරිසරයට අධික සිසිලසක් සහ සෙවනක් ලබා දෙයි."] 
+            },
+            "ahala": { 
+                title: "ඇහැල", scientific: "Cassia fistula", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Cassia_fistula_flower.jpg/800px-Cassia_fistula_flower.jpg", 
+                description: "මල් පිපෙන කාලයට සම්පූර්ණ ගසම කහ පැහැති මල් පොකුරු වලින් වැසී යන ඉතා අලංකාර ගසකි.", 
+                benefits: ["පරිසරය අලංකාර කිරීම සඳහා මාර්ග දෙපස බහුලව වගා කෙරේ.", "ආයුර්වේදයේදී මලබද්ධය සහ සමේ රෝග සුව කිරීමට යොදා ගනී.", "ශක්තිමත් දැවයක් ලබා දෙයි."] 
+            },
+            "nelli": { 
+                title: "නෙල්ලි", scientific: "Phyllanthus emblica", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Phyllanthus_emblica_-_Amla.jpg/800px-Phyllanthus_emblica_-_Amla.jpg", 
+                description: "විටමින් C ඉතා විශාල ප්‍රමාණයක් අඩංගු, කුඩා කොළ සහ ඇඹුල්/තිත්ත රසැති පලතුරක් සහිත ගසකි.", 
+                benefits: ["ශරීරයේ ප්‍රතිශක්තිය ඉතා ඉහළ නංවන පලතුරකි.", "රුධිරය පිරිසිදු කර සමේ පැහැය වර්ධනය කරයි.", "ආයුර්වේදයේ 'ත්‍රිඵලා' සංයෝගයේ ප්‍රධාන අඩංගු ද්‍රව්‍යයකි."] 
+            }
+        };
 
         const urlParams = new URLSearchParams(window.location.search);
         const plantId = urlParams.get('plant');
@@ -597,35 +615,46 @@ const plantData = {
         const contentDiv = document.getElementById('plant-content');
         const errorMsg = document.getElementById('error-msg');
         const plantImage = document.getElementById('p-image');
+        const spinner = document.getElementById('loading-spinner');
 
         if (plantId && plantData[plantId]) {
             const data = plantData[plantId];
             
-            // Set basic info
+            // Set details
             document.getElementById('p-title').innerText = data.title;
             document.getElementById('p-scientific').innerText = data.scientific;
             document.getElementById('p-description').innerText = data.description;
             
-            // Handle image loading animation
-            plantImage.src = data.image;
-            plantImage.onload = function() {
-                this.classList.add('loaded'); // Add 'loaded' class when image is loaded
-            };
-
-            // Set structured benefits list
+            // Set benefits list
             const benefitsList = document.getElementById('p-benefits');
-            benefitsList.innerHTML = ''; // Clear existing
+            benefitsList.innerHTML = ''; // Clear previous items
             data.benefits.forEach(benefit => {
                 const li = document.createElement('li');
                 li.innerText = benefit;
                 benefitsList.appendChild(li);
             });
 
-            contentDiv.style.display = 'block'; // Show content
+            // Show content
+            contentDiv.style.display = 'block'; 
+
+            // Load Image
+            plantImage.src = data.image;
+            
+            plantImage.onload = function() {
+                spinner.style.display = 'none'; // Hide spinner
+                this.classList.add('loaded'); // Apply animation
+            };
+            
+            plantImage.onerror = function() {
+                this.src = fallbackImg; // Use fallback if link fails
+                spinner.style.display = 'none';
+                this.classList.add('loaded');
+            };
+
         } else {
-            errorMsg.style.display = 'block'; // Show error
+            // Show error message
+            errorMsg.style.display = 'block'; 
         }
     </script>
-
 </body>
 </html>
